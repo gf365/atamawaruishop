@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコードスキャン</title>
+    <script src="https://unpkg.com/@zxing/library"></script>
+</head>
+<body>
+    <h2>QRコードスキャナー</h2>
+    <video id="video" width="300" height="200" autoplay></video>
+    <button id="scanButton">QRコードをスキャン</button>
+    <p id="output"></p>
+    <button id="saveButton">ローカル保存</button>
+    <button id="uploadButton">クラウドへアップロード</button>
+
+    <script>
+        const video = document.getElementById("video");
+        const output = document.getElementById("output");
+        const saveButton = document.getElementById("saveButton");
+        const uploadButton = document.getElementById("uploadButton");
+        
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => { video.srcObject = stream; });
+        
+        const codeReader = new ZXing.BrowserQRCodeReader();
+        
+        document.getElementById("scanButton").addEventListener("click", async () => {
+            try {
+                const result = await codeReader.decodeFromVideoDevice(undefined, video);
+                output.textContent = result.text;
+            } catch (err) {
+                output.textContent = "QRコードの読み取りに失敗しました。";
+            }
+        });
+
+        saveButton.addEventListener("click", () => {
+            localStorage.setItem("qrData", output.textContent);
+            alert("データを保存しました！");
+        });
+
+        uploadButton.addEventListener("click", () => {
+            const qrData = localStorage.getItem("qrData");
+            if (!qrData) {
+                alert("保存されたデータがありません。");
+                return;
+            }
+            const blob = new Blob([qrData], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "qr_data.txt";
+            a.click();
+            alert("仮のアップロード（ファイルダウンロード）を実行しました。");
+        });
+    </script>
+</body>
+</html>
