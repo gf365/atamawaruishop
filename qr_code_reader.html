@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコードリーダー</title>
+    <script defer src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #reader { width: 300px; margin: auto; }
+        #result { margin-top: 20px; font-size: 1.2em; }
+        #download { margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <h1>QRコードリーダー</h1>
+    <div id="reader"></div>
+    <p id="result">QRコードをスキャンしてください</p>
+    <a id="download" href="#" download="qr_code_result.txt">スキャン結果をダウンロード</a>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof Html5QrcodeScanner !== "undefined") {
+                function onScanSuccess(decodedText, decodedResult) {
+                    document.getElementById('result').innerText = `読み取った内容: ${decodedText}`;
+                    let downloadLink = document.getElementById('download');
+                    let blob = new Blob([decodedText], { type: 'text/plain' });
+                    let url = URL.createObjectURL(blob);
+                    downloadLink.href = url;
+                    downloadLink.style.display = 'block';
+                }
+
+                function onScanFailure(error) {
+                    console.warn(`読み取りエラー: ${error}`);
+                }
+
+                let html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader", { fps: 10, qrbox: 250 }
+                );
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            } else {
+                document.getElementById('result').innerText = "QRコードライブラリの読み込みに失敗しました。";
+                console.error("Html5QrcodeScanner is not defined. Check if the script is loaded correctly.");
+            }
+        });
+    </script>
+</body>
+</html>
