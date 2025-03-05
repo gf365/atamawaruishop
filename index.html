@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRコードリーダー（デバッグモード）</title>
+    <title>QRコードリーダー（ZXing.js）</title>
     <script defer src="script.js"></script>
     <link rel="stylesheet" href="style.css">
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         video { width: 100%; max-width: 400px; border: 2px solid #000; }
         button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
-        #debug-log { text-align: left; margin-top: 20px; padding: 10px; background: #f4f4f4; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; }
+        #debug-log { margin-top: 20px; padding: 10px; background: #f4f4f4; border: 1px solid #ccc; font-size: 14px; }
     </style>
 </head>
 <body>
-    <h1>QRコードリーダー（デバッグモード）</h1>
+    <h1>QRコードリーダー（ZXing.js）</h1>
     <video id="video" autoplay></video>
     <button onclick="startScanning()">QRコードをスキャン</button>
     <p id="result">結果: なし</p>
-    <div id="debug-log">📋 デバッグログ:<br></div>
+    <div id="debug-log">📋 デバッグログ: なし</div>
 </body>
 </html>

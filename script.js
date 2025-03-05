@@ -6,14 +6,21 @@ const debugLog = document.getElementById("debug-log");
 
 function logMessage(message) {
     console.log(message);
-    debugLog.innerHTML += message + "<br>";
+    if (debugLog) {
+        debugLog.textContent = message; // 最新のメッセージのみ表示
+    }
 }
 
 async function startScanning() {
     logMessage("🔹 スキャン開始...");
-    
+
     const constraints = {
-        video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }
+        video: { 
+            facingMode: "environment", // 背面カメラを強制
+            width: { ideal: 1280 }, 
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 }
+        }
     };
 
     try {
@@ -27,10 +34,10 @@ async function startScanning() {
                 resultText.textContent = "結果: " + result.text;
                 logMessage("🎉 QRコード読み取り成功: " + result.text);
             } else if (err) {
-                logMessage("⚠️ QRコード未検出");
+                logMessage("⚠️ QRコード未検出...");
             }
         });
     } catch (error) {
-        logMessage("❌ カメラの起動に失敗しました: " + error.message);
+        logMessage("❌ カメラの起動に失敗: " + error.message);
     }
 }
