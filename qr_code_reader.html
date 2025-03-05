@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QRコードリーダー</title>
-    <script defer src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="html5-qrcode.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         #reader { width: 300px; margin: auto; }
@@ -17,7 +17,7 @@
     <div id="reader"></div>
     <p id="result">QRコードをスキャンしてください</p>
     <a id="download" href="#" download="qr_code_result.txt">スキャン結果をダウンロード</a>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof Html5QrcodeScanner !== "undefined") {
