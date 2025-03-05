@@ -30,6 +30,7 @@
             try {
                 const result = await codeReader.decodeFromVideoDevice(undefined, video);
                 output.textContent = result.text;
+                localStorage.setItem("qrData", result.text);
             } catch (err) {
                 output.textContent = "QRコードの読み取りに失敗しました。もう一度スキャンしてください。";
             }
@@ -38,8 +39,13 @@
         scanButton.addEventListener("click", scanQRCode);
 
         saveButton.addEventListener("click", () => {
-            localStorage.setItem("qrData", output.textContent);
-            alert("データを保存しました！");
+            const qrData = output.textContent;
+            if (qrData && qrData !== "QRコードの読み取りに失敗しました。もう一度スキャンしてください。") {
+                localStorage.setItem("qrData", qrData);
+                alert("データを保存しました！");
+            } else {
+                alert("正しいQRコードをスキャンしてから保存してください。");
+            }
         });
 
         uploadButton.addEventListener("click", () => {
