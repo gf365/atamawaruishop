@@ -19,20 +19,23 @@
         const output = document.getElementById("output");
         const saveButton = document.getElementById("saveButton");
         const uploadButton = document.getElementById("uploadButton");
+        const scanButton = document.getElementById("scanButton");
         
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
             .then(stream => { video.srcObject = stream; });
         
         const codeReader = new ZXing.BrowserQRCodeReader();
         
-        document.getElementById("scanButton").addEventListener("click", async () => {
+        async function scanQRCode() {
             try {
                 const result = await codeReader.decodeFromVideoDevice(undefined, video);
                 output.textContent = result.text;
             } catch (err) {
-                output.textContent = "QRコードの読み取りに失敗しました。";
+                output.textContent = "QRコードの読み取りに失敗しました。もう一度スキャンしてください。";
             }
-        });
+        }
+        
+        scanButton.addEventListener("click", scanQRCode);
 
         saveButton.addEventListener("click", () => {
             localStorage.setItem("qrData", output.textContent);
