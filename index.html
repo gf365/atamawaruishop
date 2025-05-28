@@ -1,6 +1,609 @@
+
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>頭悪いショップ 機能案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .content-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .nav-item.active {
+            background-color: #fcd34d; /* amber-300 */
+            color: #78350f; /* amber-800 */
+            font-weight: 600;
+        }
+        .nav-item:hover {
+            background-color: #fbbf24; /* amber-400 */
+        }
+         /* For Webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff7ed; /* orange-50 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fdba74; /* orange-300 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f97316; /* orange-500 */
+        }
+        .llm-button {
+            background-image: linear-gradient(to right, #f97316, #fbbf24);
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .llm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .llm-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .vote-button {
+            background-color: #f97316; /* orange-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* full rounded */
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .vote-button:hover {
+            background-color: #ea580c; /* orange-600 */
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .vote-button:disabled {
+            background-color: #d1d5db; /* gray-300 */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .poll-result-bar {
+            height: 2rem;
+            border-radius: 0.5rem;
+            transition: width 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 text-stone-800 flex flex-col min-h-screen">
 <a href="https://g.co/gemini/share/af11c28ca9f9">site</a>
+    <header class="bg-amber-500 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center">頭悪いショップ</h1>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        <p class="mb-6 text-center text-stone-700 md:text-lg">
+            ここは「頭悪いショップ」！中学校の友達と作る、最高にバカバカしくて面白いウェブサイトの機能を紹介するガイドだよ。
+            画面左側（スマホでは上の方）のメニューから、気になる「アホな機能」を選んでみてね！詳しい説明が右側（スマホでは下の方）に表示されるよ。
+        </p>
+
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+            <nav id="featuresNav" class="md:w-1/3 lg:w-1/4 bg-amber-100 p-4 sm:p-6 rounded-lg shadow-lg md:sticky md:top-24 self-start">
+                <h2 class="text-xl font-semibold text-orange-700 mb-4 border-b-2 border-amber-300 pb-2">アホな機能一覧</h2>
+                <ul id="navList" class="space-y-2">
+                </ul>
+            </nav>
+
+            <main id="featureDetail" class="md:w-2/3 lg:w-3/4 bg-white p-6 sm:p-8 rounded-lg shadow-xl content-transition min-h-[300px]">
+                <div id="initialMessage" class="text-center text-stone-600">
+                    <p class="text-lg">アホな機能を選んでみてね！</p>
+                    <p class="mt-2 text-2xl">🤪</p>
+                </div>
+                <div id="featureContent" class="hidden">
+                    <h2 id="featureTitle" class="text-2xl sm:text-3xl font-bold text-orange-700 mb-6 border-b-2 border-orange-200 pb-3"></h2>
+                    <div class="prose prose-stone max-w-none">
+                        <div id="featureIntro" class="mb-6 p-4 bg-orange-50 rounded-md border border-orange-200 text-sm sm:text-base"></div>
+                        <h3 class="text-xl font-semibold text-amber-600 mb-2">📝 内容</h3>
+                        <p id="featureDescription" class="mb-6 text-base sm:text-lg leading-relaxed"></p>
+                        <h3 class="text-xl font-semibold text-amber-600 mb-2">🌟 メリット</h3>
+                        <p id="featureBenefits" class="mb-6 text-base sm:text-lg leading-relaxed"></p>
+                    </div>
+                    <div id="llmFeatureSection" class="mt-8 pt-6 border-t-2 border-orange-100 hidden">
+                        <h3 id="llmFeatureTitle" class="text-xl font-semibold text-orange-700 mb-4"></h3>
+                        <div id="llmInputArea" class="mb-4"></div>
+                        <div id="llmOutputArea" class="mt-4 p-4 bg-amber-50 rounded-md border border-amber-200 text-stone-700 whitespace-pre-wrap min-h-[100px] flex items-center justify-center text-sm italic">
+                            ここにAIによる生成結果が表示されるよ。
+                        </div>
+                    </div>
+                    <div id="pollSection" class="mt-8 pt-6 border-t-2 border-orange-100 hidden">
+                        <h3 class="text-xl font-semibold text-orange-700 mb-4">📊 今日の「どっちがアホ？」投票</h3>
+                        <div id="pollDisplay" class="mb-4 p-4 bg-orange-50 rounded-md border border-orange-200">
+                            <p id="pollQuestion" class="text-lg font-semibold text-stone-800 mb-4 text-center"></p>
+                            <div id="pollOptions" class="flex flex-col sm:flex-row justify-center gap-4 mb-4">
+                                <button id="voteA" class="vote-button flex-1">A: </button>
+                                <button id="voteB" class="vote-button flex-1">B: </button>
+                            </div>
+                            <div id="pollResults" class="hidden mt-4">
+                                <p class="text-center text-stone-700 font-semibold mb-2">投票結果:</p>
+                                <div class="flex items-center mb-2">
+                                    <span id="optionALabel" class="w-1/4 text-right pr-2 text-stone-700 font-medium"></span>
+                                    <div class="w-3/4 bg-gray-200 rounded-full poll-result-bar-container">
+                                        <div id="resultA" class="bg-blue-500 poll-result-bar" style="width: 0%;"></div>
+                                    </div>
+                                    <span id="percentageA" class="w-1/6 text-left pl-2 text-stone-700 font-medium">0%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span id="optionBLabel" class="w-1/4 text-right pr-2 text-stone-700 font-medium"></span>
+                                    <div class="w-3/4 bg-gray-200 rounded-full poll-result-bar-container">
+                                        <div id="resultB" class="bg-red-500 poll-result-bar" style="width: 0%;"></div>
+                                    </div>
+                                    <span id="percentageB" class="w-1/6 text-left pl-2 text-stone-700 font-medium">0%</span>
+                                </div>
+                                <p id="totalVotes" class="text-center text-sm text-stone-500 mt-4"></p>
+                            </div>
+                            <p id="pollStatusMessage" class="text-center text-sm text-stone-600 mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="bg-amber-500 text-white py-6 mt-auto">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 頭悪いショップ 企画部</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, deleteDoc, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const featuresData = [
+            {
+                id: "profile",
+                name: "アホなプロフィール帳",
+                icon: "🤪",
+                description: "中学校の友達みんなの「最高にアホなところ」や「最近やらかした爆笑失敗談」を自由に書けるページだよ。変顔写真とか、おもしろいイラストも載せると、もっと個性が光るね！",
+                benefits: "中学校の友達の「意外なアホな一面」を知って、みんなで大笑いできるよ。新しいあだ名が生まれるかも！？"
+            },
+            {
+                id: "daily_updates",
+                name: "今日のバカバカしいつぶやき",
+                icon: "💬",
+                description: "AIがランダムに「今日のバカバカしいつぶやき」を生成してくれるよ！「え、なにこれ！？」って思わず笑っちゃうような、意味不明だけど面白い一言が出てくるかも。",
+                benefits: "中学校の友達みんなで「今日のつぶやき、何かな？」って毎日見に来るのが楽しみになるよ。AIの予測不能なバカバカしさに、きっと毎日笑顔になれるはず！"
+            },
+            {
+                id: "calendar",
+                name: "アホなイベント計画カレンダー",
+                icon: "🗓️",
+                description: "中学校の友達みんなで「変なTシャツ着て集まろう！」「公園で大声大会しよう！」みたいな、ちょっと変わったイベントの予定を共有するカレンダー。リマインダー機能があれば、忘れ物ゼロを目指せるかも！",
+                benefits: "中学校の友達との面白いイベントが企画しやすくなるよ。みんなで「バカなこと」をして、最高の思い出を作ろう！"
+            },
+            {
+                id: "study_card",
+                name: "爆笑！暗記カードメーカー",
+                icon: "🧠",
+                description: "テストに出そうな単語や公式を、中学校の友達みんなで「アホな例文」や「変なイラスト」付きの暗記カードにできる機能だよ。これでバカバカしく暗記しよう！",
+                benefits: "バカバカしい例文や絵で覚えるから、頭に残るはず！中学校の友達みんなで作ったカードを見て笑いながら、いつの間にか暗記できちゃうかも！？"
+            },
+            {
+                id: "stupid_advice",
+                name: "アホな悩み相談室",
+                icon: "💡",
+                description: "中学校の友達みんなの「どうでもいい悩み」や「ちょっと困ったこと」を入力すると、AIが「頭悪いショップ」にふさわしい、ユニークで笑える解決策を提案してくれるよ。真面目に考えすぎず、AIのバカバカしいアイデアに笑って元気を出そう！",
+                benefits: "どんな悩みも、AIの「アホな解決策」で笑い飛ばせるようになるよ！深刻な悩みも、ちょっと視点を変えて面白く考えられるようになるかも！？"
+            },
+            {
+                id: "poll",
+                name: "どっちがアホ？投票",
+                icon: "📊",
+                description: "毎日、AIが考えた（またはあらかじめ用意された）新しい「どっちがアホ？」な質問が登場するよ！投票すると、すぐにみんなの投票結果（AとBの割合）が表示されるんだ。",
+                benefits: "毎日新しい「アホな選択」に挑戦できて、飽きずに楽しめるよ。みんなの「アホな意見」が集まって、意外な結果に爆笑できること間違いなし！"
+            }
+        ];
+
+        // どっちがアホ？投票 の質問リスト
+        const pollQuestions = [
+            { question: "テスト勉強するなら、鉛筆の芯を食べるのと、消しゴムを食べるの、どっちがアホ？", optionA: "鉛筆の芯", optionB: "消しゴム" },
+            { question: "学校に持っていくなら、巨大なブロッコリーと、喋る石、どっちがアホ？", optionA: "巨大ブロッコリー", optionB: "喋る石" },
+            { question: "一日中、逆立ちで生活するのと、カエル語しか喋れなくなるの、どっちがアホ？", optionA: "逆立ち生活", optionB: "カエル語" },
+            { question: "寝る前に、靴下を履いたまま寝るのと、歯ブラシをくわえたまま寝るの、どっちがアホ？", optionA: "靴下履いたまま寝る", optionB: "歯ブラシくわえたまま寝る" },
+            { question: "透明人間になれるけど、おならの音だけは世界中に響き渡るのと、空を飛べるけど、常に鼻歌を歌ってしまうの、どっちがアホ？", optionA: "透明人間＋おなら", optionB: "空飛ぶ＋鼻歌" },
+            { question: "給食で、毎日カレーだけど具はグミと、毎日ラーメンだけど麺は輪ゴム、どっちがアホ？", optionA: "グミカレー", optionB: "輪ゴムラーメン" },
+            { question: "タイムスリップするなら、縄文時代にスマホを持っていくのと、未来に土器を持っていくの、どっちがアホ？", optionA: "縄文にスマホ", optionB: "未来に土器" },
+            { question: "一週間、ずっとスキップで移動するのと、語尾に「〜だドン！」とつけて喋るの、どっちがアホ？", optionA: "スキップ移動", optionB: "語尾「〜だドン！」" },
+            { question: "自分の声が、常にアニメキャラの声になるのと、常に効果音（例：ピコーン！）になるの、どっちがアホ？", optionA: "アニメキャラの声", optionB: "効果音" },
+            { question: "テスト中に、隣の席の友達が急に踊り出すのと、先生が急に歌い出すの、どっちがアホ？", optionA: "友達が踊り出す", optionB: "先生が歌い出す" }
+        ];
+
+
+        const navList = document.getElementById('navList');
+        const featureDetail = document.getElementById('featureDetail');
+        const initialMessage = document.getElementById('initialMessage');
+        const featureContent = document.getElementById('featureContent');
+        const featureTitle = document.getElementById('featureTitle');
+        const featureIntro = document.getElementById('featureIntro');
+        const featureDescription = document.getElementById('featureDescription');
+        const featureBenefits = document.getElementById('featureBenefits');
+        const llmFeatureSection = document.getElementById('llmFeatureSection');
+        const llmFeatureTitle = document.getElementById('llmFeatureTitle');
+        const llmInputArea = document.getElementById('llmInputArea');
+        const llmOutputArea = document.getElementById('llmOutputArea');
+        const pollSection = document.getElementById('pollSection');
+        const pollQuestionElement = document.getElementById('pollQuestion');
+        const voteAButton = document.getElementById('voteA');
+        const voteBButton = document.getElementById('voteB');
+        const pollResultsDiv = document.getElementById('pollResults');
+        const optionALabel = document.getElementById('optionALabel');
+        const optionBLabel = document.getElementById('optionBLabel');
+        const resultA = document.getElementById('resultA');
+        const resultB = document.getElementById('resultB');
+        const percentageA = document.getElementById('percentageA');
+        const percentageB = document.getElementById('percentageB');
+        const totalVotesElement = document.getElementById('totalVotes');
+        const pollStatusMessage = document.getElementById('pollStatusMessage');
+
+
+        let currentActiveNavItem = null;
+        let db;
+        let auth;
+        let userId;
+        let appId;
+        let currentPollIndex;
+        let currentPollDateId; // YYYYMMDD形式
+
+        // Firebase初期化と認証
+        document.addEventListener('DOMContentLoaded', async () => {
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase initialized and authenticated. User ID:", userId);
+                    } else {
+                        console.log("No user signed in.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or authentication error:", error);
+            }
+        });
+
+        // 今日の日付に基づいて投票質問を選択する
+        function getDailyPoll() {
+            const today = new Date();
+            const startOfYear = new Date(today.getFullYear(), 0, 1);
+            const diff = today.getTime() - startOfYear.getTime();
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay);
+            
+            currentPollIndex = dayOfYear % pollQuestions.length;
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            currentPollDateId = `${year}${month}${day}`;
+
+            return pollQuestions[currentPollIndex];
+        }
+
+        // 投票結果をFirestoreからリアルタイムで取得・表示
+        function setupPollListener() {
+            if (!db || !userId) {
+                console.warn("Firestore or User ID not available for poll listener setup.");
+                return;
+            }
+
+            const pollDocRef = doc(db, `artifacts/${appId}/public/data/daily_poll_results`, `poll_results_${currentPollDateId}`);
+            const userVoteDocRef = doc(db, `artifacts/${appId}/users/${userId}/daily_votes_tracker`, `vote_status_${currentPollDateId}`);
+
+            onSnapshot(pollDocRef, (docSnap) => {
+                let votesA = 0;
+                let votesB = 0;
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    votesA = data.votesA || 0;
+                    votesB = data.votesB || 0;
+                }
+                updatePollResultsDisplay(votesA, votesB);
+            }, (error) => {
+                console.error("Error listening to poll results:", error);
+                pollStatusMessage.textContent = '投票結果の読み込みに失敗しました。';
+            });
+
+            // ユーザーの投票状況をチェック
+            onSnapshot(userVoteDocRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().voted) {
+                    disableVotingButtons(true);
+                    pollStatusMessage.textContent = `今日はもう投票したよ！ (${docSnap.data().votedOption}に投票)`;
+                } else {
+                    disableVotingButtons(false);
+                    pollStatusMessage.textContent = 'どちらがアホか、投票してね！';
+                }
+            }, (error) => {
+                console.error("Error checking user vote status:", error);
+                pollStatusMessage.textContent = '投票状況の確認に失敗しました。';
+            });
+        }
+
+        // 投票結果の表示を更新する
+        function updatePollResultsDisplay(votesA, votesB) {
+            const totalVotes = votesA + votesB;
+            const percentageAValue = totalVotes === 0 ? 0 : (votesA / totalVotes) * 100;
+            const percentageBValue = totalVotes === 0 ? 0 : (votesB / totalVotes) * 100;
+
+            resultA.style.width = `${percentageAValue}%`;
+            resultB.style.width = `${percentageBValue}%`;
+            percentageA.textContent = `${percentageAValue.toFixed(0)}%`;
+            percentageB.textContent = `${percentageBValue.toFixed(0)}%`;
+            totalVotesElement.textContent = `合計投票数: ${totalVotes}`;
+
+            pollResultsDiv.classList.remove('hidden');
+        }
+
+        // 投票ボタンの有効/無効を切り替える
+        function disableVotingButtons(disabled) {
+            voteAButton.disabled = disabled;
+            voteBButton.disabled = disabled;
+        }
+
+        // 投票処理
+        async function handleVote(option) {
+            if (!db || !userId) {
+                pollStatusMessage.textContent = 'データベースが準備できてないみたい...ちょっと待ってね！';
+                return;
+            }
+
+            const pollDocRef = doc(db, `artifacts/${appId}/public/data/daily_poll_results`, `poll_results_${currentPollDateId}`);
+            const userVoteDocRef = doc(db, `artifacts/${appId}/users/${userId}/daily_votes_tracker`, `vote_status_${currentPollDateId}`);
+
+            // ユーザーが既に投票しているかチェック
+            const userVoteSnap = await getDoc(userVoteDocRef);
+            if (userVoteSnap.exists() && userVoteSnap.data().voted) {
+                pollStatusMessage.textContent = `今日はもう投票したよ！ (${userVoteSnap.data().votedOption}に投票済み)`;
+                disableVotingButtons(true);
+                return;
+            }
+
+            try {
+                // 公開投票結果を更新 (increment)
+                await setDoc(pollDocRef, {
+                    questionIndex: currentPollIndex,
+                    votesA: option === 'A' ? (await getDoc(pollDocRef)).data()?.votesA + 1 || 1 : (await getDoc(pollDocRef)).data()?.votesA || 0,
+                    votesB: option === 'B' ? (await getDoc(pollDocRef)).data()?.votesB + 1 || 1 : (await getDoc(pollDocRef)).data()?.votesB || 0,
+                }, { merge: true }); // merge: true で既存のフィールドは上書きせず、指定フィールドのみ更新
+
+                // ユーザーの投票状況を記録
+                await setDoc(userVoteDocRef, {
+                    voted: true,
+                    votedOption: option,
+                    timestamp: serverTimestamp()
+                });
+
+                pollStatusMessage.textContent = `${option}に投票したよ！ありがとう！`;
+                disableVotingButtons(true); // 投票後はボタンを無効化
+            } catch (e) {
+                console.error("Error voting:", e);
+                pollStatusMessage.textContent = '投票に失敗しちゃったみたい。もう一度試してみてね！';
+            }
+        }
+
+        voteAButton.onclick = () => handleVote('A');
+        voteBButton.onclick = () => handleVote('B');
+
+
+        async function callGeminiAPI(prompt) {
+            llmOutputArea.textContent = 'AIがアイデアを生成中... ✨ ちょっと待ってね！';
+            llmOutputArea.classList.add('animate-pulse');
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    llmOutputArea.textContent = text;
+                } else {
+                    llmOutputArea.textContent = 'アイデアの生成に失敗しちゃったみたい。もう一度試してみてね！';
+                }
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                llmOutputArea.textContent = 'インターネットの調子が悪いみたい。もう一度試してみてね！';
+            } finally {
+                llmOutputArea.classList.remove('animate-pulse');
+            }
+        }
+
+        function generateSelfIntroIdeas() {
+            llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+            const interestsInput = document.getElementById('profileInterests');
+            const interests = interestsInput ? interestsInput.value : '';
+            const prompt = `中学校の友達向けの「頭悪いショップ」ウェブサイトで使う自己紹介文のアイデアをいくつか提案してください。好きなことや趣味が「${interests}」です。中学生にわかりやすく、バカバカしくて面白いトーンで、箇条書きで3つほど提案してください。`;
+            callGeminiAPI(prompt);
+        }
+
+        function suggestEventIdeas() {
+            llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+            const eventContextInput = document.getElementById('eventContext');
+            const context = eventContextInput ? eventContextInput.value : '';
+            const prompt = `中学校の友達との集まりで盛り上がる「頭悪いショップ」にふさわしいイベントのアイデアをいくつか提案してください。現在の状況や希望は「${context}」です。中学生が楽しめるような、ユニークでアホなアイデアを箇条書きで3つほど提案してください。`;
+            callGeminiAPI(prompt);
+        }
+
+        function generateStudyCardExample() {
+            llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+            const wordInput = document.getElementById('studyWord');
+            const word = wordInput ? wordInput.value : '';
+            const prompt = `中学校のテスト勉強用の「アホな暗記カード」を作りたいです。単語や年号「${word}」を使って、中学生が爆笑して記憶に残るような、バカバカしい例文を1つ提案してください。例文の後に、その単語の変なイメージイラストのアイデアも1つ提案してください。`;
+            callGeminiAPI(prompt);
+        }
+
+        function solveStupidProblem() {
+            llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+            const problemInput = document.getElementById('stupidProblem');
+            const problem = problemInput ? problemInput.value : '';
+            const prompt = `中学生向けの「頭悪いショップ」の悩み相談室です。以下の悩みに対して、めちゃくちゃで、ちょっとバカバカしいけど、なぜか笑えてしまうような「アホな解決策」を3つ提案してください。真面目すぎず、ユーモアを交えてお願いします。悩み: ${problem}`;
+            callGeminiAPI(prompt);
+        }
+
+        function generateRandomStupidTweet() {
+            llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+            const prompt = `中学校の友達向けの「頭悪いショップ」で、ランダムに表示される「今日のバカバカしいつぶやき」を1つ提案してください。短く、意味不明で、思わず「は？」となるような、でもちょっと笑えるつぶやきをお願いします。`;
+            callGeminiAPI(prompt);
+        }
+
+        function displayFeature(featureId) {
+            const feature = featuresData.find(f => f.id === featureId);
+            if (feature) {
+                featureDetail.style.opacity = 0;
+                setTimeout(() => {
+                    initialMessage.classList.add('hidden');
+                    featureContent.classList.remove('hidden');
+                    
+                    featureTitle.textContent = `${feature.icon} ${feature.name}`;
+                    featureIntro.innerHTML = `ここでは「<strong>${feature.name}</strong>」について詳しく見ていこう！どんな内容で、どんなメリットがあるのかな？`;
+                    featureDescription.textContent = feature.description;
+                    featureBenefits.textContent = feature.benefits;
+
+                    // Clear previous LLM section content
+                    llmFeatureSection.classList.add('hidden');
+                    llmInputArea.innerHTML = '';
+                    llmOutputArea.textContent = 'ここにAIによる生成結果が表示されるよ。';
+                    llmOutputArea.classList.remove('animate-pulse');
+
+                    // Hide poll section by default
+                    pollSection.classList.add('hidden');
+
+                    if (featureId === 'profile') {
+                        llmFeatureSection.classList.remove('hidden');
+                        llmFeatureTitle.textContent = '✨ アホな自己紹介アイデアをAIに聞いてみよう！';
+                        llmInputArea.innerHTML = `
+                            <label for="profileInterests" class="block text-sm font-medium text-stone-700 mb-2">好きなことやキーワードを入力してね (例: ゲーム、旅行、料理)</label>
+                            <textarea id="profileInterests" class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例: 読書、映画鑑賞、猫好き"></textarea>
+                            <button id="generateProfileIdeasBtn" class="llm-button mt-3 px-6 py-2 rounded-full text-white font-semibold">
+                                アイデアを生成！
+                            </button>
+                        `;
+                        document.getElementById('generateProfileIdeasBtn').onclick = generateSelfIntroIdeas;
+                    } else if (featureId === 'daily_updates') {
+                        llmFeatureSection.classList.remove('hidden');
+                        llmFeatureTitle.textContent = '✨ 今日のバカバカしいつぶやきをAIに生成してもらおう！';
+                        llmInputArea.innerHTML = `
+                            <p class="text-sm text-stone-700 mb-2">ボタンを押すと、AIがランダムにつぶやきを生成するよ！</p>
+                            <button id="generateRandomTweetBtn" class="llm-button mt-3 px-6 py-2 rounded-full text-white font-semibold">
+                                アホなつぶやきを生成！
+                            </button>
+                        `;
+                        document.getElementById('generateRandomTweetBtn').onclick = generateRandomStupidTweet;
+                    } else if (featureId === 'calendar') {
+                        llmFeatureSection.classList.remove('hidden');
+                        llmFeatureTitle.textContent = '✨ アホなイベントアイデアをAIに提案してもらおう！';
+                        llmInputArea.innerHTML = `
+                            <label for="eventContext" class="block text-sm font-medium text-stone-700 mb-2">どんな集まりにしたいか、希望や状況を入力してね (例: 5人で放課後、お金をかけずに、体を動かしたい)</label>
+                            <textarea id="eventContext" class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例: みんなでワイワイ、誕生日パーティー、テスト勉強会"></textarea>
+                            <button id="suggestEventIdeasBtn" class="llm-button mt-3 px-6 py-2 rounded-full text-white font-semibold">
+                                アイデアを提案！
+                            </button>
+                        `;
+                        document.getElementById('suggestEventIdeasBtn').onclick = suggestEventIdeas;
+                    } else if (featureId === 'study_card') {
+                        llmFeatureSection.classList.remove('hidden');
+                        llmFeatureTitle.textContent = '✨ AIにアホな暗記カードの例文を提案してもらおう！';
+                        llmInputArea.innerHTML = `
+                            <label for="studyWord" class="block text-sm font-medium text-stone-700 mb-2">暗記したい単語や公式を入力してね (例: 1603年 徳川家康、寛永通宝)</label>
+                            <textarea id="studyWord" class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500" rows="2" placeholder="例: 1603年 徳川家康、寛永通宝"></textarea>
+                            <button id="generateStudyCardBtn" class="llm-button mt-3 px-6 py-2 rounded-full text-white font-semibold">
+                                例文を生成！
+                            </button>
+                        `;
+                        document.getElementById('generateStudyCardBtn').onclick = generateStudyCardExample;
+                    } else if (featureId === 'stupid_advice') {
+                        llmFeatureSection.classList.remove('hidden');
+                        llmFeatureTitle.textContent = '✨ AIにアホな解決策を提案してもらおう！';
+                        llmInputArea.innerHTML = `
+                            <label for="stupidProblem" class="block text-sm font-medium text-stone-700 mb-2">あなたのくだらない悩みを入力してね (例: 朝起きるのがつらい、給食の牛乳が苦手)</label>
+                            <textarea id="stupidProblem" class="w-full p-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500" rows="3" placeholder="例: 宿題が終わらない！"></textarea>
+                            <button id="solveStupidProblemBtn" class="llm-button mt-3 px-6 py-2 rounded-full text-white font-semibold">
+                                解決策を提案！
+                            </button>
+                        `;
+                        document.getElementById('solveStupidProblemBtn').onclick = solveStupidProblem;
+                    } else if (featureId === 'poll') {
+                        pollSection.classList.remove('hidden');
+                        const dailyPoll = getDailyPoll();
+                        pollQuestionElement.textContent = dailyPoll.question;
+                        voteAButton.textContent = `A: ${dailyPoll.optionA}`;
+                        voteBButton.textContent = `B: ${dailyPoll.optionB}`;
+                        optionALabel.textContent = dailyPoll.optionA;
+                        optionBLabel.textContent = dailyPoll.optionB;
+                        setupPollListener(); // 投票リスナーをセットアップ
+                    }
+                    
+                    featureDetail.style.opacity = 1;
+                }, 150);
+            }
+        }
+
+        featuresData.forEach(feature => {
+            const listItem = document.createElement('li');
+            const button = document.createElement('button');
+            button.className = 'nav-item w-full text-left px-4 py-2 rounded-md text-stone-700 hover:bg-amber-400 hover:text-amber-800 transition-colors duration-150 ease-in-out text-sm sm:text-base';
+            button.textContent = `${feature.icon} ${feature.name}`;
+            button.onclick = () => {
+                displayFeature(feature.id);
+                if (currentActiveNavItem) {
+                    currentActiveNavItem.classList.remove('active');
+                }
+                button.classList.add('active');
+                currentActiveNavItem = button;
+
+                // Scroll main content into view on mobile after selection
+                if (window.innerWidth < 768) { // md breakpoint
+                    featureDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+            listItem.appendChild(button);
+            navList.appendChild(listItem);
+        });
+
+        // Optionally display the first feature by default
+        // if (featuresData.length > 0) {
+        //    const firstFeatureButton = navList.querySelector('button');
+        //    if (firstFeatureButton) {
+        //        firstFeatureButton.click();
+        //    }
+        // }
+    </script>
 </body>
 </html>
