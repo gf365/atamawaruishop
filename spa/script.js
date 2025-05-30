@@ -2,6 +2,16 @@
 const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI';
 
+// Supabaseクライアントの初期化関数
+function createClient(supabaseUrl, supabaseKey) {
+    // グローバルにSupabaseが利用可能かチェック
+    if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+        console.error("Supabaseライブラリが読み込まれていません。index.htmlで<script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>が正しく設定されているか確認してください。");
+        return null;
+    }
+    return window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // supabaseクライアントが正しく初期化されていない場合は処理を中断
@@ -106,14 +116,3 @@ supabase
         loadPosts(); // 新しい投稿があったら再読み込み
     })
     .subscribe();
-
-// Supabaseクライアントの初期化関数
-function createClient(supabaseUrl, supabaseKey) {
-    // グローバルにSupabaseが利用可能かチェック
-    // window.supabase を使用して、グローバルスコープのSupabaseオブジェクトにアクセス
-    if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
-        console.error("Supabaseライブラリが読み込まれていません。index.htmlで<script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>が正しく設定されているか確認してください。");
-        return null;
-    }
-    return window.supabase.createClient(supabaseUrl, supabaseKey);
-}
