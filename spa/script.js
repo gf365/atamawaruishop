@@ -4,6 +4,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// supabaseクライアントが正しく初期化されていない場合は処理を中断
+if (!supabase) {
+    console.error("Supabaseクライアントの初期化に失敗しました。処理を中断します。");
+    const postsList = document.getElementById('posts-list');
+    if (postsList) {
+        postsList.innerHTML = '<p style="color: red;">掲示板機能が利用できません。Supabaseの設定を確認してください。</p>';
+    }
+    const submitPostButton = document.getElementById('submit-post');
+    if (submitPostButton) {
+        submitPostButton.disabled = true;
+    }
+    throw new Error("Supabase initialization failed."); // これで以降のスクリプト実行を停止
+}
+
+
 const postUsernameInput = document.getElementById('post-username');
 const postContentInput = document.getElementById('post-content');
 const submitPostButton = document.getElementById('submit-post');
@@ -67,7 +82,7 @@ submitPostButton.addEventListener('click', async () => {
 
     if (error) {
         console.error('投稿中にエラーが発生しました:', error.message);
-        alert('投稿に失敗しました。');
+        alert('投稿に失敗しました。エラー: ' + error.message); // エラーメッセージを表示
     } else {
         postContentInput.value = ''; // 投稿フォームをクリア
         postUsernameInput.value = ''; // 名前フォームもクリア
@@ -95,9 +110,10 @@ supabase
 // Supabaseクライアントの初期化関数
 function createClient(supabaseUrl, supabaseKey) {
     // グローバルにSupabaseが利用可能かチェック
-    if (typeof supabase === 'undefined') {
+    // window.supabase を使用して、グローバルスコープのSupabaseオブジェクトにアクセス
+    if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
         console.error("Supabaseライブラリが読み込まれていません。index.htmlで<script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>が正しく設定されているか確認してください。");
         return null;
     }
-    return supabase.createClient(supabaseUrl, supabaseKey);
+    return window.supabase.createClient(supabaseUrl, supabaseKey);
 }
