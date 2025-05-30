@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルな掲示板</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>シンプルな掲示板</h1>
+
+        <div class="post-form">
+            <input type="text" id="post-username" placeholder="名前 (任意)">
+            <textarea id="post-content" placeholder="ここにメッセージを入力してください..." rows="4"></textarea>
+            <button id="submit-post">投稿する</button>
+        </div>
+
+        <div id="posts-list" class="posts-list">
+            <p>投稿がありません。</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
