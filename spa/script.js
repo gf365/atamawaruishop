@@ -1,6 +1,6 @@
-// ★★★ ここにあなたのSupabaseプロジェクトの情報を入力してください ★★★
-const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co'; // 例: https://abcdefghijklmn.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI'; // 例: eyJhbGciOiJIUzI1Ni...
+// ★★★ あなたのSupabaseプロジェクトの情報をここに反映済み ★★★
+const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
