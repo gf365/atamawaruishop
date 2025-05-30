@@ -2,6 +2,9 @@
 const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI';
 
+// =======================================================
+// ★★★ 修正点: createClient 関数を一番上に移動しました ★★★
+// =======================================================
 // Supabaseクライアントの初期化関数
 function createClient(supabaseUrl, supabaseKey) {
     // グローバルにSupabaseが利用可能かチェック
@@ -11,6 +14,11 @@ function createClient(supabaseUrl, supabaseKey) {
     }
     return window.supabase.createClient(supabaseUrl, supabaseKey);
 }
+
+// =======================================================
+// ★★★ 修正点終わり ★★★
+// =======================================================
+
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
