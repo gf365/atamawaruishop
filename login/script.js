@@ -1,11 +1,11 @@
 // SupabaseプロジェクトのURLとAnonキーをここに設定
 // これらはあなたのSupabaseプロジェクトのSettings -> API Keysで確認できます
-const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI';
+const SUPABASE_URL = 'https://qmnsrzmpfylycqmmtqfq.supabase.co'; // あなたのProject URL
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnNyem1wZnlseWNxbW10cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExNjM0OTMsImV4cCI6MjA1NjczOTQ5M30.2MBxBT6hGqEF81SdBa6X_iGdbN2hdjrL1RztQFHqBPI'; // あなたのSupabase anon key
 
 // Superbaseクライアントの初期化
-// @supabase/supabase-js SDKを使用する場合、createClientメソッドはsupabaseオブジェクトから呼び出されます
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// @supabase/supabase-js SDKを使用する場合、createClientメソッドはSupabaseオブジェクトから呼び出されます
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // ここを修正
 
 // DOM要素の取得
 const authForm = document.getElementById('auth-form');
